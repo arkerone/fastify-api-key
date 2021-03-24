@@ -34,7 +34,6 @@ function fastifyApiKey (fastify, options, next) {
     requestLifetime = 300
   } = options
 
-  fastify.decorateRequest('clientId', null)
   fastify.decorateRequest('apiKeyVerify', requestVerify)
 
   next()
@@ -143,13 +142,7 @@ function fastifyApiKey (fastify, options, next) {
           return cb(new Unauthorized(messages.invalidSignatureErrorMessage))
         }
         cb()
-      }], (err) => {
-      if (err) {
-        return next(err)
-      }
-      request.clientId = signatureParams.keyid
-      next(null, signatureParams.keyid)
-    })
+      }], next)
   }
 }
 
