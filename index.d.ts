@@ -2,8 +2,8 @@ import * as fastify from 'fastify'
 
 
 export type GetSecretCallback =
-    ((request: fastify.FastifyRequest, clientId: string, cb: (e: Error | null | undefined, secret: string | undefined) => void) => void)
-    | ((request: fastify.FastifyRequest, clientId: string | undefined) => Promise<string>)
+    ((request: fastify.FastifyRequest, keyId: string, cb: (e: Error | null | undefined, secret: string | undefined) => void) => void)
+    | ((request: fastify.FastifyRequest, keyId: string | undefined) => Promise<string>)
 
 export interface FastifyApiKeyOptions {
     getSecret: GetSecretCallback;
@@ -18,10 +18,8 @@ export default fastifyApiKey
 
 declare module 'fastify' {
     interface FastifyRequest {
-        apiKeyVerify(): Promise<string>
+        apiKeyVerify(): Promise<void>
 
-        apiKeyVerify(cb: (e: Error | null | undefined, clientId: string) => void): void
-
-        clientId: string
+        apiKeyVerify(cb: (e: Error | null | undefined) => void): void
     }
 }

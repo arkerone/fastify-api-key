@@ -7,17 +7,17 @@ import fastifyApiKey from '.'
 const app = fastify()
 
 app.register(fastifyApiKey, {
-    getSecret: async function validatePromise(request, clientId) {
+    getSecret: async function validatePromise(request, keyId) {
         expectAssignable<FastifyRequest>(request)
-        expectAssignable<string>(clientId)
+        expectAssignable<string>(keyId)
     },
     requestLifetime: 300
 })
 
 app.register(fastifyApiKey, {
-    getSecret: function validateCallback(request, clientId, cb) {
+    getSecret: function validateCallback(request, keyId, cb) {
         expectAssignable<FastifyRequest>(request)
-        expectAssignable<string>(clientId)
+        expectAssignable<string>(keyId)
         expectAssignable<(e: Error | null | undefined, secret: string | undefined) => void>(cb)
     },
     requestLifetime: 300
@@ -26,8 +26,7 @@ app.register(fastifyApiKey, {
 
 app.addHook("preHandler", async (request, reply) => {
     expectAssignable<Function>(request.apiKeyVerify)
-    expectAssignable<string>(request.clientId)
-
+    
     try {
         await request.apiKeyVerify();
     } catch (err) {
