@@ -1,0 +1,51 @@
+{
+  "name": "fastify-api-key",
+  "version": "1.0.0",
+  "description": "Fastify plugin to authenticate HTTP requests based on api key and signature",
+  "author": {
+    "name": "Axel SHAÏTA",
+    "email": "shaita.axel@gmail.com",
+    "url": "https://www.codeheroes.fr"
+  },
+  "license": "MIT",
+  "keywords": [
+    "fastify",
+    "authentication",
+    "auth",
+    "http",
+    "api",
+    "rest",
+    "apiKey",
+    "key",
+    "signature",
+    "plugin",
+    "nodejs"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "lint": "standard",
+    "lint:fix": "standard --fix",
+    "test": "standard && tap test.js && tsd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arkerone/fastify-api-key"
+  },
+  "bugs": {
+    "url": "https://github.com/arkerone/fastify-api-key/issues"
+  },
+  "homepage": "https://github.com/arkerone/fastify-api-key#readme",
+  "devDependencies": {
+    "fastify": "^3.14.0",
+    "standard": "^16.0.3",
+    "tap": "^14.11.0",
+    "tsd": "^0.14.0",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "fastify-plugin": "^3.0.0",
+    "http-errors": "^1.8.0",
+    "steed": "^1.1.3"
+  }
+}
