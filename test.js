@@ -34,16 +34,16 @@ test('register', (t) => {
 })
 
 test('requestVerify', (t) => {
-  t.plan(7)
+  t.plan(6)
 
-  const clientId = '123456789'
+  const keyId = '123456789'
   const secret = 'secret'
   const date = (new Date()).toString()
   const host = 'http://localhost'
   const signingString = `(request-target): get /verify\nhost: ${host}\ndate: ${date}`
   const signature = crypto.createHmac('sha1', secret).update(signingString).digest('base64')
 
-  const authorization = `Signature keyId="${clientId}",algorithm="hmac-sha1",headers="(request-target) host date",signature="${signature}"`
+  const authorization = `Signature keyId="${keyId}",algorithm="hmac-sha1",headers="(request-target) host date",signature="${signature}"`
 
   t.test('getSecret', (t) => {
     t.plan(3)
@@ -52,8 +52,9 @@ test('requestVerify', (t) => {
       const fastify = Fastify()
       fastify.register(apiKey, { getSecret })
 
-      fastify.get('/verify', (request) => {
-        return request.apiKeyVerify()
+      fastify.get('/verify', async (request) => {
+        await request.apiKeyVerify()
+        return 'test'
       })
 
       await fastify.ready()
@@ -68,11 +69,11 @@ test('requestVerify', (t) => {
         }
       })
 
-      t.is(verifyResponse.payload, clientId)
+      t.is(verifyResponse.payload, 'test')
     }
 
     t.test('getSecret as a function with callback', (t) => {
-      return runWithGetSecret(t, (request, clientId, callback) => {
+      return runWithGetSecret(t, (request, keyId, callback) => {
         callback(null, secret)
       })
     })
@@ -96,20 +97,21 @@ test('requestVerify', (t) => {
 
     fastify.register(apiKey, {
       requestLifetime: null,
-      getSecret: (request, clientId, cb) => {
+      getSecret: (request, keyId, cb) => {
         cb(null, secret)
       }
     })
 
     fastify.get('/verify', async (request) => {
-      return request.apiKeyVerify()
+      await request.apiKeyVerify()
+      return 'test'
     })
 
     const date = new Date('1970-01-01').toString()
     const signingString = `date: ${date}`
     const signature = crypto.createHmac('sha1', secret).update(signingString).digest('base64')
 
-    const authorizationWithoutHeader = `Signature keyId="${clientId}",algorithm="hmac-sha1",signature="${signature}"`
+    const authorizationWithoutHeader = `Signature keyId="${keyId}",algorithm="hmac-sha1",signature="${signature}"`
 
     fastify.inject({
       method: 'get',
@@ -119,7 +121,7 @@ test('requestVerify', (t) => {
         date
       }
     }).then((response) => {
-      t.is(response.payload, clientId)
+      t.is(response.payload, 'test')
     })
   })
 
@@ -128,19 +130,20 @@ test('requestVerify', (t) => {
     const fastify = Fastify()
 
     fastify.register(apiKey, {
-      getSecret: (request, clientId, cb) => {
+      getSecret: (request, keyId, cb) => {
         cb(null, secret)
       }
     })
 
     fastify.get('/verify', async (request) => {
-      return request.apiKeyVerify()
+      await request.apiKeyVerify()
+      return 'test'
     })
 
     const signingString = `date: ${date}`
     const signature = crypto.createHmac('sha1', secret).update(signingString).digest('base64')
 
-    const authorizationWithoutHeader = `Signature keyId="${clientId}",algorithm="hmac-sha1",signature="${signature}"`
+    const authorizationWithoutHeader = `Signature keyId="${keyId}",algorithm="hmac-sha1",signature="${signature}"`
 
     fastify.inject({
       method: 'get',
@@ -150,7 +153,7 @@ test('requestVerify', (t) => {
         date
       }
     }).then((response) => {
-      t.is(response.payload, clientId)
+      t.is(response.payload, 'test')
     })
   })
 
@@ -159,13 +162,14 @@ test('requestVerify', (t) => {
     const fastify = Fastify()
 
     fastify.register(apiKey, {
-      getSecret: (request, clientId, cb) => {
+      getSecret: (request, keyId, cb) => {
         cb(null, secret)
       }
     })
 
     fastify.get('/verify', async (request) => {
-      return request.apiKeyVerify()
+      await request.apiKeyVerify()
+      return 'test'
     })
 
     fastify.inject({
@@ -177,7 +181,7 @@ test('requestVerify', (t) => {
         host
       }
     }).then((response) => {
-      t.is(response.payload, clientId)
+      t.is(response.payload, 'test')
     })
   })
 
@@ -186,14 +190,14 @@ test('requestVerify', (t) => {
     const fastify = Fastify()
 
     fastify.register(apiKey, {
-      getSecret: (request, clientId, cb) => {
+      getSecret: (request, keyId, cb) => {
         cb(null, secret)
       }
     })
 
-    fastify.get('/verify', async (request, reply) => {
-      request.apiKeyVerify((error, clientId) => {
-        return reply.send(error || clientId)
+    fastify.get('/verify', (request, reply) => {
+      request.apiKeyVerify((error) => {
+        return reply.send(error || 'test')
       })
     })
 
@@ -206,34 +210,7 @@ test('requestVerify', (t) => {
         host
       }
     }).then((response) => {
-      t.is(response.payload, clientId)
-    })
-  })
-
-  t.test('clientId is set to the request', (t) => {
-    t.plan(1)
-    const fastify = Fastify()
-    fastify.register(apiKey, {
-      getSecret: (request, clientId, cb) => {
-        cb(null, secret)
-      }
-    })
-
-    fastify.get('/verify', async (request) => {
-      await request.apiKeyVerify()
-      return request.clientId
-    })
-
-    fastify.inject({
-      method: 'get',
-      url: '/verify',
-      headers: {
-        authorization,
-        date,
-        host
-      }
-    }).then((response) => {
-      t.is(response.payload, clientId)
+      t.is(response.payload, 'test')
     })
   })
 
@@ -243,14 +220,14 @@ test('requestVerify', (t) => {
     const signature = 'Signature keyid="123456789",algorithm="hmac-sha1",headers="host date",signature="signature"'
     const fastify = Fastify()
     fastify.register(apiKey, {
-      getSecret: (request, clientId, cb) => {
+      getSecret: (request, keyId, cb) => {
         cb(null, 'secret')
       }
     })
 
     fastify.get('/verify', (request, reply) => {
-      request.apiKeyVerify().then((clientId) => {
-        return reply.send(clientId)
+      request.apiKeyVerify().then(() => {
+        return reply.send('test')
       }).catch((error) => {
         return reply.send(error)
       })
