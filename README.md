@@ -1,5 +1,8 @@
 # fastify-api-key
 
+![CI](https://github.com/arkerone/fastify-api-key/workflows/CI/badge.svg)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
+
 Fastify plugin to authenticate HTTP requests based on api key and signature.
 
 ## Installation
