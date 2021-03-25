@@ -209,7 +209,7 @@ Let's see the different components of the signature :
 * **signature (REQUIRED)** : A base 64 encoded digital signature. The client uses the `algorithm` and `headers`
   signature parameters to form a canonicalized `signing string`.
 
-### Signature String Construction [](signature-string-construction)
+### Signature string construction
 
 To generate the string that is signed with the shared secret and the `algorithm`, the client must use the values of each
 HTTP header field in the `headers` Signature parameter in the order they appear.
@@ -250,7 +250,7 @@ x-test: Hello world
 
 In order to create a signature, a client must :
 
-1. Create the signature string as described in [Signature String Construction](#signature-string-construction);
+1. Create the signature string as described in [signature string construction](#signature-string-construction);
 
 2. The `algorithm` and shared secret associated with `keyId` must then be used to generate a digital signature on the
    signature string;
