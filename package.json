@@ -1,6 +1,6 @@
 {
   "name": "fastify-api-key",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Fastify plugin to authenticate HTTP requests based on api key and signature",
   "author": {
     "name": "Axel SHAÏTA",
