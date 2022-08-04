@@ -147,6 +147,6 @@ function fastifyApiKey (fastify, options, next) {
 }
 
 module.exports = fp(fastifyApiKey, {
-  fastify: '3.x',
+  fastify: '>=3.x',
   name: 'fastify-api-key'
 })
